@@ -1,151 +1,221 @@
+var budgetController = (function(){
 
-// All of these IIFEs are the module pattern i.e. immediately invoked on page load
-// and expose properties and functions that need to be publicly available once the form
-// has been loaded. By returning objects, they make their contents public - their inner contents
-// remain private.
-// So don't get confused with the outer functions - just think of them like a wrapper
+    var Expense = function(id,description,value){
 
-var budgetController = function () {
-    var Expense = function (id, value, description) {
         this.id = id;
-        this.value = value;
+
         this.description = description;
-    };
-    var Income = function (id, value, description) {
-        this.id = id;
+
         this.value = value;
-        this.description = description;
+
+       
+
     };
 
-    var nextId = function () {
-        data.lastId++;
-        return data.lastId;
+   
+
+    var Income = function(id,description,value){
+
+        this.id = id;
+
+        this.description = description;
+
+        this.value = value;
+
     };
-    
+
     var data = {
+
         allItems: {
-            expense: [],
-            income: []
+
+            exp: [],
+
+            inc: []
+
         },
+
+       
+
         totals: {
-            expense: 0,
-            income: 0
-        },
-        lastId: 0,
-        budget: 0
+
+            exp: 0,
+
+            inc: 0
+
+        }
+
+               
+
     };
 
     return {
-        addItem: function (type, desc, val) {
-            var newItem;
 
-            if (type === 'expense') {
-                newItem = new Expense(nextId(), val, desc);
+        testing: function(){
+
+            console.log(allItems);
+
+        }
+
+    };
+
+   
+
+    return{
+
+        addItem: function(type,des,val){
+
+            var newItem,ID;
+
+           
+
+           
+
+            if(type === 'exp'){
+
+                newItem = new Expense(ID,des,val);
+
             }
 
-            else {
-                newItem = new Income(nextId(), val, desc);
+            else if (type === 'inc'){
+
+                newItem = new Income(ID,des,val);
+
             }
+
+           
+
+            if(data.allItems[type].length > 0){
+
+                ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+
+            }
+
+            else{
+
+                ID = 0;
+
+            }
+
+           
+
             data.allItems[type].push(newItem);
-            data.totals[type] += parseFloat(val);
+
             return newItem;
-        },
-        print: function () {
-            console.log(data);
-        },
-        calcBudget: function(){
-            data.budget = data.budget.income + data.totals.expense;
-            return data.budget;
-        }
-    }
-
-}();
-
-//UI CONTROLLER
-var UIController = function () {
-    var DOMStrgs = {
-        incExp: '.add__type',
-        desc: '.add__description',
-        amount: '.add__value',
-        addBtn: '.add__btn',
-        incomeContainer: '.income__list',
-        expensesContainer: '.expenses__list',
-        budget: '.budget__value'
-    };
-    return {
-        getInput: function () {
-            return {
-                type: document.querySelector(DOMStrgs.incExp).value,
-                description: document.querySelector(DOMStrgs.desc).value,
-                value: document.querySelector(DOMStrgs.amount).value
-            }
-        },
-        DOMStrgs,
-        addListItem: function (item, type) {
-            var html, newHtml, element;
-            // Create HTML string with placeholder text
-            
-            if (type === 'income') {
-                element = DOMStrgs.incomeContainer;
-
-                html = '<div class="item clearfix" id="inc-%id%"> <div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
-            } else {
-                element = DOMStrgs.expensesContainer;
-
-                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
-            }
-
-            // Replace the placeholder text with some actual data
-            newHtml = html.replace('%id%', item.id);
-            newHtml = newHtml.replace('%description%', item.description);
-            newHtml = newHtml.replace('%value%', item.value);
-
-            // Insert the HTML into the DOM
-            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
-        },
-        showBudget: function(budg){
 
         }
+
     }
-}();
 
-//APP CONTROLLER
-// This controls communication between the budgetController and the UI Controller
-// as these are used when the module is immediately executed on page load
-var controller = function (budgCtrl, UICtrl) {
+   
 
-    var setupEventListeners = function () {
-        var DOMStrgs = UICtrl.DOMStrgs;
-        document.querySelector(DOMStrgs.addBtn).addEventListener('click', ctrlAddItem);
-        document.addEventListener('keypress', function (event) {
-            //'which' is for older browsers that don't have keyCode
-            if (event.keyCode === 13 || event.which === 13) {
-                ctrlAddItem();
-            }
-        })
+   
+
+})();
+
+var UIController = (function(){
+
+    var DOMstrings = {
+
+        inputType: '.add__type',
+
+        inputDescription: '.add__description',
+
+        inputValue: '.add__value',
+
+        inputBtn: '.add__btn'
+
+       
+
     };
 
-    var ctrlAddItem = function () {
-        console.log('Add');
-        var input, newItem, budget;
-        //1.  Get the field input data
-        input = UICtrl.getInput();
-        //2.  Add the item to the budget controller
-        newItem = budgCtrl.addItem(input.type, input.description, input.value);
-        //3.  Add the item to the UI
-        UICtrl.addListItem(newItem, input.type);
-        //4.  Calculate the budget
-        budget = budgCtrl.calcBudget();
-        //5.  Display the budget on the UI
-        document.querySelector(DOMStrgs.budget).value = budget;
-    }
     return {
-        init: function () {
-            console.log('App has started');
+
+        getInput: function(){
+
+            return{
+
+                type: document.querySelector(DOMstrings.inputType).value,
+
+                description: document.querySelector(DOMstrings.inputDescription).value,
+
+                value: document.querySelector(DOMstrings.inputValue).value
+
+            };
+
+        },
+
+        getDOMstrings: function(){
+
+            return DOMstrings;
+
+        }
+
+    };
+
+   
+
+})();
+
+
+
+var controller = (function(budgetCntrl,UICntrl){
+
+   
+
+       
+
+    var cntrlAddItem = function(){
+
+        var inputt, newItem2;
+
+        inputt = UICntrl.getInput();
+
+       
+
+        newItem2 = budgetCntrl.addItem(inputt.type,inputt.description,inputt.value);
+
+   
+
+    }
+
+   
+
+
+
+    var setupEventListeners = function() {
+
+        var DOM = UICntrl.getDOMstrings();
+
+       
+
+        document.querySelector(DOM.inputBtn).addEventListener('click',cntrlAddItem);
+
+        document.addEventListener('keypress', function(event){
+
+        if(event.keyCode === 13 || event.which === 13)
+
+            cntrlAddItem();
+
+    });   
+
+       
+
+    }
+
+    return{
+
+        init: function(){
+
+            console.log('App has started.');
+
             setupEventListeners();
-        }
-    }
-}(budgetController, UIController);
 
-//INITIALISE THE APP
-controller.init();
+        }
+
+    }
+
+   
+
+   
+
+})(budgetController,UIController);

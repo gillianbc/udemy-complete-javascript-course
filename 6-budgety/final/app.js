@@ -431,7 +431,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         
         if (itemID) {
             
-            //inc-1
+            //inc-1 - tokenize
             splitID = itemID.split('-');
             type = splitID[0];
             ID = parseInt(splitID[1]);
